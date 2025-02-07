@@ -7,5 +7,7 @@ data class PokemonDetails(
     val weight: Double,
     val types: List<String>,
     val stats: List<Stat>,
-    val imageUrl: String
+    val imageUrl: String,
+    val abilities: List<Ability>,
+    val moves: List<Move>
 )

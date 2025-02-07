@@ -1,16 +1,15 @@
 package com.guicarneirodev.pokedexapp.ui.theme
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.Offset
 
 @Composable
 fun PokemonTypePattern(
@@ -28,7 +27,6 @@ fun PokemonTypePattern(
                     val x = col * patternSize + (if (row % 2 == 0) patternSize / 2 else 0f)
                     val y = row * patternSize
 
-                    // Desenhar círculo externo
                     addOval(
                         Rect(
                             offset = Offset(x - patternSize/4, y - patternSize/4),
@@ -36,11 +34,9 @@ fun PokemonTypePattern(
                         )
                     )
 
-                    // Desenhar linha central
                     moveTo(x - patternSize/4, y)
                     lineTo(x + patternSize/4, y)
 
-                    // Desenhar círculo central
                     addOval(
                         Rect(
                             offset = Offset(x - patternSize/8, y - patternSize/8),
@@ -53,7 +49,7 @@ fun PokemonTypePattern(
 
         drawPath(
             path = pattern,
-            color = typeColor.copy(alpha = 0.05f),
+            color = typeColor.copy(alpha = 0.075f),
             style = Stroke(width = 1.dp.toPx())
         )
     }

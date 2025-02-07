@@ -11,6 +11,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -38,6 +39,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.guicarneirodev.pokedexapp.core.domain.model.PokemonDetails
+import com.guicarneirodev.pokedexapp.ui.theme.PokemonTypePattern
 import com.guicarneirodev.pokedexapp.ui.theme.getPokemonTypeColor
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -55,184 +57,224 @@ fun PokemonDetailsContent(
         contentVisible = true
     }
 
-    AnimatedVisibility(
-        visible = contentVisible,
-        enter = fadeIn(
-            animationSpec = tween(
-                durationMillis = 500
-            )
-        ) + expandVertically(
-            expandFrom = Alignment.Top,
-            animationSpec = tween(durationMillis = 500)
-        ),
-        modifier = modifier
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            mainTypeColor.copy(alpha = 0.2f),
-                            MaterialTheme.colorScheme.surface
-                        )
-                    )
+    Box(modifier = modifier.fillMaxSize()) {
+        PokemonTypePattern(
+            typeColor = mainTypeColor,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        AnimatedVisibility(
+            visible = contentVisible,
+            enter = fadeIn(
+                animationSpec = tween(
+                    durationMillis = 500
                 )
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            ) + expandVertically(
+                expandFrom = Alignment.Top,
+                animationSpec = tween(durationMillis = 500)
+            )
         ) {
-            PokemonImage(
-                imageUrl = pokemon.imageUrl,
-                pokemonName = pokemon.name,
-                modifier = Modifier
-                    .size(200.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .scale(
-                        animateFloatAsState(
-                            targetValue = if (contentVisible) 1f else 0.8f,
-                            animationSpec = spring(
-                                dampingRatio = Spring.DampingRatioMediumBouncy,
-                                stiffness = Spring.StiffnessLow
-                            ), label = ""
-                        ).value
-                    )
-            )
-
-            AnimatedVisibility(
-                visible = contentVisible,
-                enter = fadeIn(
-                    animationSpec = tween(
-                        durationMillis = 500,
-                        delayMillis = 300
-                    )
-                ) + slideInVertically()
-            ) {
-                Text(
-                    text = "#${pokemon.id} ${pokemon.name.replaceFirstChar { it.uppercase() }}",
-                    style = MaterialTheme.typography.headlineLarge.copy(
-                        color = mainTypeColor
-                    ),
-                    modifier = Modifier.padding(vertical = 16.dp)
-                )
-            }
-
-            AnimatedVisibility(
-                visible = contentVisible,
-                enter = fadeIn(
-                    animationSpec = tween(
-                        durationMillis = 500,
-                        delayMillis = 400
-                    )
-                ) + slideInHorizontally()
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "Height: ${pokemon.height} m",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Text(
-                        text = "Weight: ${pokemon.weight} kg",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            AnimatedVisibility(
-                visible = contentVisible,
-                enter = fadeIn(
-                    animationSpec = tween(
-                        durationMillis = 500,
-                        delayMillis = 500
-                    )
-                )
-            ) {
-                Text(
-                    text = "Types",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        color = mainTypeColor,
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-            }
-
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                maxItemsInEachRow = 3
-            ) {
-                pokemon.types.forEachIndexed { index, type ->
-                    AnimatedVisibility(
-                        visible = contentVisible,
-                        enter = fadeIn(
-                            animationSpec = tween(
-                                durationMillis = 500,
-                                delayMillis = 600 + (index * 100)
-                            )
-                        ) + slideInHorizontally(
-                            animationSpec = tween(
-                                durationMillis = 500,
-                                delayMillis = 600 + (index * 100)
-                            ),
-                            initialOffsetX = { if (index % 2 == 0) -it else it }
-                        )
-                    ) {
-                        TypeChip(type = type)
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            AnimatedVisibility(
-                visible = contentVisible,
-                enter = fadeIn(
-                    animationSpec = tween(
-                        durationMillis = 500,
-                        delayMillis = 700
-                    )
-                )
-            ) {
-                Text(
-                    text = "Stats",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        color = mainTypeColor,
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-            }
-
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .fillMaxSize()
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                mainTypeColor.copy(alpha = 0.2f),
+                                MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
+                            )
+                        )
+                    )
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                pokemon.stats.forEachIndexed { index, stat ->
-                    AnimatedVisibility(
-                        visible = contentVisible,
-                        enter = fadeIn(
-                            animationSpec = tween(
-                                durationMillis = 500,
-                                delayMillis = 800 + (index * 100)
-                            )
-                        ) + slideInHorizontally(
-                            animationSpec = tween(
-                                durationMillis = 500,
-                                delayMillis = 800 + (index * 100)
-                            )
+                PokemonImage(
+                    imageUrl = pokemon.imageUrl,
+                    pokemonName = pokemon.name,
+                    modifier = Modifier
+                        .size(200.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .scale(
+                            animateFloatAsState(
+                                targetValue = if (contentVisible) 1f else 0.8f,
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                ), label = ""
+                            ).value
                         )
+                )
+
+                AnimatedVisibility(
+                    visible = contentVisible,
+                    enter = fadeIn(
+                        animationSpec = tween(
+                            durationMillis = 500,
+                            delayMillis = 300
+                        )
+                    ) + slideInVertically()
+                ) {
+                    Text(
+                        text = "#${pokemon.id} ${pokemon.name.replaceFirstChar { it.uppercase() }}",
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            color = mainTypeColor
+                        ),
+                        modifier = Modifier.padding(vertical = 16.dp)
+                    )
+                }
+
+                AnimatedVisibility(
+                    visible = contentVisible,
+                    enter = fadeIn(
+                        animationSpec = tween(
+                            durationMillis = 500,
+                            delayMillis = 400
+                        )
+                    ) + slideInHorizontally()
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        StatRow(
-                            stat = stat,
-                            animateProgress = contentVisible,
-                            typeColor = mainTypeColor
+                        Text(
+                            text = "Height: ${pokemon.height} m",
+                            style = MaterialTheme.typography.bodyLarge
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Weight: ${pokemon.weight} kg",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                AnimatedVisibility(
+                    visible = contentVisible,
+                    enter = fadeIn(
+                        animationSpec = tween(
+                            durationMillis = 500,
+                            delayMillis = 500
+                        )
+                    )
+                ) {
+                    Text(
+                        text = "Types",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            color = mainTypeColor,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                }
+
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    maxItemsInEachRow = 3
+                ) {
+                    pokemon.types.forEachIndexed { index, type ->
+                        AnimatedVisibility(
+                            visible = contentVisible,
+                            enter = fadeIn(
+                                animationSpec = tween(
+                                    durationMillis = 500,
+                                    delayMillis = 600 + (index * 100)
+                                )
+                            ) + slideInHorizontally(
+                                animationSpec = tween(
+                                    durationMillis = 500,
+                                    delayMillis = 600 + (index * 100)
+                                ),
+                                initialOffsetX = { if (index % 2 == 0) -it else it }
+                            )
+                        ) {
+                            TypeChip(type = type)
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                AnimatedVisibility(
+                    visible = contentVisible,
+                    enter = fadeIn(
+                        animationSpec = tween(
+                            durationMillis = 500,
+                            delayMillis = 700
+                        )
+                    )
+                ) {
+                    Text(
+                        text = "Stats",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            color = mainTypeColor,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    pokemon.stats.forEachIndexed { index, stat ->
+                        AnimatedVisibility(
+                            visible = contentVisible,
+                            enter = fadeIn(
+                                animationSpec = tween(
+                                    durationMillis = 500,
+                                    delayMillis = 800 + (index * 100)
+                                )
+                            ) + slideInHorizontally(
+                                animationSpec = tween(
+                                    durationMillis = 500,
+                                    delayMillis = 800 + (index * 100)
+                                )
+                            )
+                        ) {
+                            StatRow(
+                                stat = stat,
+                                animateProgress = contentVisible,
+                                typeColor = mainTypeColor
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                AnimatedVisibility(
+                    visible = contentVisible,
+                    enter = fadeIn(
+                        animationSpec = tween(
+                            durationMillis = 500,
+                            delayMillis = 900
+                        )
+                    )
+                ) {
+                    AbilitiesSection(
+                        abilities = pokemon.abilities,
+                        typeColor = mainTypeColor
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                AnimatedVisibility(
+                    visible = contentVisible,
+                    enter = fadeIn(
+                        animationSpec = tween(
+                            durationMillis = 500,
+                            delayMillis = 1000
+                        )
+                    )
+                ) {
+                    MovesSection(
+                        moves = pokemon.moves,
+                        typeColor = mainTypeColor
+                    )
                 }
             }
         }

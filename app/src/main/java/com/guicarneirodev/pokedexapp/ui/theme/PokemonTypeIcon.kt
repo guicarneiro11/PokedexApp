@@ -26,10 +26,10 @@ fun PokemonTypeIcon(type: String, modifier: Modifier = Modifier) {
         "bug" -> Icons.Default.BugReport
         "rock" -> Icons.Default.Terrain
         "ghost" -> Icons.Default.BlurOn
-        "dragon" -> Icons.Default.Animation
+        "dragon" -> Icons.Default.Cyclone
         "dark" -> Icons.Default.DarkMode
-        "steel" -> Icons.Default.Shield
-        "fairy" -> Icons.Default.Star
+        "steel" -> Icons.Default.Link
+        "fairy" -> Icons.Default.Stars
         else -> Icons.AutoMirrored.Filled.Help
     }
 
