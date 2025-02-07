@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.guicarneirodev.pokedexapp.core.domain.model.Move
-import com.guicarneirodev.pokedexapp.ui.theme.getPokemonTypeColor
+import com.guicarneirodev.pokedexapp.core.presentation.theme.getPokemonTypeColor
 
 @Composable
 fun MovesSection(

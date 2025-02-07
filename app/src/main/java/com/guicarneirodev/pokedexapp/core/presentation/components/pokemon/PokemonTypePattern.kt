@@ -1,4 +1,4 @@
-package com.guicarneirodev.pokedexapp.ui.theme
+package com.guicarneirodev.pokedexapp.core.presentation.components.pokemon
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable

@@ -96,4 +96,9 @@ dependencies {
 
     // Icons
     implementation(libs.material.icons.extended)
+
+    // Unit Tests
+    testImplementation(libs.mockk)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.turbine)
 }

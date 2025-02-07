@@ -1,23 +1,22 @@
-package com.guicarneirodev.pokedexapp
+package com.guicarneirodev.pokedexapp.presentation.navigation
 
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.guicarneirodev.pokedexapp.features.details.presentation.PokemonDetailsScreen
 import com.guicarneirodev.pokedexapp.features.list.presentation.PokemonListScreen
 
 @Composable
-fun PokedexApp(
+fun NavGraph(
+    navController: NavHostController,
     darkTheme: Boolean,
     onThemeChange: (Boolean) -> Unit
 ) {
-    val navController = rememberNavController()
-
     NavHost(
         navController = navController,
         startDestination = "pokemon_list",

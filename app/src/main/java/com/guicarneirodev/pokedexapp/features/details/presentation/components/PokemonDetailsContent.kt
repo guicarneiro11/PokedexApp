@@ -39,8 +39,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.guicarneirodev.pokedexapp.core.domain.model.PokemonDetails
-import com.guicarneirodev.pokedexapp.ui.theme.PokemonTypePattern
-import com.guicarneirodev.pokedexapp.ui.theme.getPokemonTypeColor
+import com.guicarneirodev.pokedexapp.core.presentation.components.pokemon.PokemonTypePattern
+import com.guicarneirodev.pokedexapp.core.presentation.theme.getPokemonTypeColor
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

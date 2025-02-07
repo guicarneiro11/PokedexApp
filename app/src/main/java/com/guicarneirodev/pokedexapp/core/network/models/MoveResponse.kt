@@ -1,6 +1,9 @@
 package com.guicarneirodev.pokedexapp.core.network.models
 
+import com.google.gson.annotations.SerializedName
+
 data class MoveResponse(
-    val move: NameUrlResponse
+    @SerializedName("move") val move: NameUrlResponse,
+    @SerializedName("type") val type: TypeResponse
 )
 

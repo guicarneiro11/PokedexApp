@@ -1,6 +1,5 @@
 package com.guicarneirodev.pokedexapp.core.network.models
 
-import com.google.gson.annotations.SerializedName
 import com.guicarneirodev.pokedexapp.core.domain.model.Ability
 import com.guicarneirodev.pokedexapp.core.domain.model.Move
 import com.guicarneirodev.pokedexapp.core.domain.model.PokemonDetails
@@ -20,8 +19,8 @@ data class PokemonDetailsResponse(
     fun toPokemonDetails() = PokemonDetails(
         id = id,
         name = name,
-        height = height / 10.0, // convert to meters
-        weight = weight / 10.0, // convert to kg
+        height = height / 10.0,
+        weight = weight / 10.0,
         types = types.map { it.type.name },
         stats = stats.map { Stat(it.stat.name, it.baseStat) },
         imageUrl = sprites.frontDefault,
@@ -32,7 +31,6 @@ data class PokemonDetailsResponse(
             )
         },
         moves = moves.mapNotNull { moveResponse ->
-            // A URL do move tem o formato: "https://pokeapi.co/api/v2/move/{id}/"
             val moveType = moveResponse.move.url.split("/").dropLast(1).last()
             Move(
                 name = moveResponse.move.name.replace("-", " "),

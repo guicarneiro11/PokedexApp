@@ -1,4 +1,4 @@
-package com.guicarneirodev.pokedexapp.ui.theme
+package com.guicarneirodev.pokedexapp.core.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 

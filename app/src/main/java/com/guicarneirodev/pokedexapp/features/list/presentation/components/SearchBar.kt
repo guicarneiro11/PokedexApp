@@ -23,7 +23,10 @@ fun PokemonSearchBar(
 ) {
     OutlinedTextField(
         value = query,
-        onValueChange = onQueryChange,
+        onValueChange = { newValue ->
+            val filteredValue = newValue.replace(Regex("[^a-zA-Z]"), "")
+            onQueryChange(filteredValue)
+        },
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)

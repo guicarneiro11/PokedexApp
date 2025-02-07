@@ -1,4 +1,4 @@
-package com.guicarneirodev.pokedexapp
+package com.guicarneirodev.pokedexapp.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

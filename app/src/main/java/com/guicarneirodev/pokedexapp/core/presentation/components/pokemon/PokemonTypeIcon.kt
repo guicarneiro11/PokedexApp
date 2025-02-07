@@ -1,8 +1,7 @@
-package com.guicarneirodev.pokedexapp.ui.theme
+package com.guicarneirodev.pokedexapp.core.presentation.components.pokemon
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Help
-import androidx.compose.material.icons.automirrored.rounded.Help
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

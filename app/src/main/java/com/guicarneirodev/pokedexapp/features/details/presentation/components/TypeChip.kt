@@ -13,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.guicarneirodev.pokedexapp.ui.theme.PokemonTypeIcon
-import com.guicarneirodev.pokedexapp.ui.theme.getPokemonTypeColor
+import com.guicarneirodev.pokedexapp.core.presentation.components.pokemon.PokemonTypeIcon
+import com.guicarneirodev.pokedexapp.core.presentation.theme.getPokemonTypeColor
 import androidx.compose.foundation.layout.size
 
 @Composable
