@@ -5,32 +5,42 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+@Stable
 @Composable
 fun PokemonSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val textFieldColors = OutlinedTextFieldDefaults.colors(
+        focusedBorderColor = MaterialTheme.colorScheme.primary,
+        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+        focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
+        unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+
     OutlinedTextField(
         value = query,
-        onValueChange = { newValue ->
-            val filteredValue = newValue.replace(Regex("[^a-zA-Z]"), "")
-            onQueryChange(filteredValue)
+        onValueChange = remember {
+            { newValue ->
+                val filteredValue = newValue.replace(Regex("[^a-zA-Z]"), "")
+                onQueryChange(filteredValue)
+            }
         },
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(top = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         placeholder = { Text("Search Pokémon") },
         leadingIcon = {
             Icon(
@@ -39,12 +49,7 @@ fun PokemonSearchBar(
                 tint = MaterialTheme.colorScheme.onSurface
             )
         },
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-            focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-            unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
-        ),
+        colors = textFieldColors,
         singleLine = true,
         shape = RoundedCornerShape(24.dp)
     )

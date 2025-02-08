@@ -6,6 +6,7 @@ import com.guicarneirodev.pokedexapp.core.database.PokemonDatabase
 import com.guicarneirodev.pokedexapp.core.domain.error.AppError
 import com.guicarneirodev.pokedexapp.core.domain.repository.PokemonRepository
 import com.guicarneirodev.pokedexapp.core.network.ApiService
+import com.guicarneirodev.pokedexapp.core.presentation.util.PokemonMemoryCache
 import com.guicarneirodev.pokedexapp.features.details.presentation.PokemonDetailsViewModel
 import com.guicarneirodev.pokedexapp.features.list.presentation.PokemonListViewModel
 import okhttp3.OkHttpClient
@@ -19,6 +20,7 @@ import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 
 val appModule = module {
+    single { PokemonMemoryCache() }
     single {
         Room.databaseBuilder(get(), PokemonDatabase::class.java, "pokemon.db").build()
     }
@@ -52,7 +54,7 @@ val appModule = module {
         PokemonRepositoryImpl(get(), get())
     }
     viewModel {
-        PokemonListViewModel(get())
+        PokemonListViewModel(get(),get())
     }
     viewModel {
         PokemonDetailsViewModel(get())

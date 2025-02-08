@@ -16,49 +16,62 @@ class PokemonRemoteMediator(
     private val database: PokemonDatabase
 ) : RemoteMediator<Int, PokemonEntity>() {
 
+    private val pokemonDao = database.pokemonDao()
+    private val remoteKeysDao = database.pokemonRemoteKeysDao()
+
+    override suspend fun initialize(): InitializeAction {
+        return if (database.pokemonDao().getCount() > 0) {
+            InitializeAction.SKIP_INITIAL_REFRESH
+        } else {
+            InitializeAction.LAUNCH_INITIAL_REFRESH
+        }
+    }
+
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, PokemonEntity>
     ): MediatorResult {
-        try {
+        return try {
             val page = when (loadType) {
                 LoadType.REFRESH -> null
                 LoadType.PREPEND -> {
-                    val firstItem = state.firstItemOrNull()
-                        ?: return MediatorResult.Success(endOfPaginationReached = true)
-                    val remoteKeys = database.pokemonRemoteKeysDao().getRemoteKeysById(firstItem.id)
-                        ?: return MediatorResult.Success(endOfPaginationReached = true)
-                    remoteKeys.prevKey
+                    val remoteKeys = getRemoteKeyForFirstItem(state)
+                    val prevKey = remoteKeys?.prevKey
+                        ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                    prevKey
                 }
                 LoadType.APPEND -> {
-                    val lastItem = state.lastItemOrNull()
-                        ?: return MediatorResult.Success(endOfPaginationReached = true)
-                    val remoteKeys = database.pokemonRemoteKeysDao().getRemoteKeysById(lastItem.id)
-                        ?: return MediatorResult.Success(endOfPaginationReached = true)
-                    remoteKeys.nextKey
+                    val remoteKeys = getRemoteKeyForLastItem(state)
+                    val nextKey = remoteKeys?.nextKey
+                        ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                    nextKey
                 }
             }
 
-            if (page != null && page * 20 >= 150) {
+            val offset = page?.let { it * ApiService.ITEMS_PER_PAGE } ?: 0
+            val limit = minOf(state.config.pageSize, ApiService.MAX_POKEMON - offset)
+
+            if (offset >= ApiService.MAX_POKEMON) {
                 return MediatorResult.Success(endOfPaginationReached = true)
             }
 
             val response = api.getPokemonList(
-                limit = 150,
-                offset = page?.let { it * 20 } ?: 0
+                offset = offset,
+                limit = limit
             )
 
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    database.pokemonRemoteKeysDao().clearAll()
-                    database.pokemonDao().clearAll()
+                    remoteKeysDao.clearAll()
+                    pokemonDao.clearAll()
                 }
 
-                val prevKey = if (page == null) null else page - 1
-                val nextKey = if (response.results.isEmpty() || (page?.let { it * 20 } ?: 0) + response.results.size >= 150)
+                val prevKey = if (offset == 0) null else page?.minus(1)
+                val nextKey = if (response.results.isEmpty() || offset + limit >= ApiService.MAX_POKEMON) {
                     null
-                else
-                    (page ?: 0) + 1
+                } else {
+                    page?.plus(1) ?: 1
+                }
 
                 val keys = response.results.map { pokemon ->
                     PokemonRemoteKeys(
@@ -68,8 +81,8 @@ class PokemonRemoteMediator(
                     )
                 }
 
-                database.pokemonRemoteKeysDao().insertAll(keys)
-                database.pokemonDao().insertAll(response.results.map {
+                remoteKeysDao.insertAll(keys)
+                pokemonDao.insertAll(response.results.map {
                     PokemonEntity(
                         id = it.id,
                         name = it.name,
@@ -78,9 +91,21 @@ class PokemonRemoteMediator(
                 })
             }
 
-            return MediatorResult.Success(endOfPaginationReached = response.results.isEmpty() || (page?.let { it * 20 } ?: 0) + response.results.size >= 150)
+            MediatorResult.Success(endOfPaginationReached = offset + limit >= ApiService.MAX_POKEMON)
         } catch (e: Exception) {
-            return MediatorResult.Error(e)
+            MediatorResult.Error(e)
+        }
+    }
+
+    private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, PokemonEntity>): PokemonRemoteKeys? {
+        return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()?.let { pokemon ->
+            remoteKeysDao.getRemoteKeysById(pokemon.id)
+        }
+    }
+
+    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, PokemonEntity>): PokemonRemoteKeys? {
+        return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()?.let { pokemon ->
+            remoteKeysDao.getRemoteKeysById(pokemon.id)
         }
     }
 }

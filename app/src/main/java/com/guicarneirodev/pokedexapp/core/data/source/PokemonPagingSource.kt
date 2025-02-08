@@ -24,7 +24,22 @@ class PokemonPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Pokemon> {
         return try {
-            val response = api.getPokemonList(limit = 150)
+            val page = params.key ?: 0
+            val offset = page * ApiService.ITEMS_PER_PAGE
+            val limit = minOf(ApiService.ITEMS_PER_PAGE, ApiService.MAX_POKEMON - offset)
+
+            if (offset >= ApiService.MAX_POKEMON) {
+                return LoadResult.Page(
+                    data = emptyList(),
+                    prevKey = null,
+                    nextKey = null
+                )
+            }
+
+            val response = api.getPokemonList(
+                offset = offset,
+                limit = limit
+            )
 
             val filteredResults = if (!query.isNullOrEmpty()) {
                 response.results.filter {
@@ -38,20 +53,18 @@ class PokemonPagingSource(
                 return LoadResult.Error(AppError.NotFound("No Pokémon found for '$query'"))
             }
 
-            val pokemonList = filteredResults
-                .take(150)
-                .map { pokemonResult ->
-                    Pokemon(
-                        id = pokemonResult.id,
-                        name = pokemonResult.name,
-                        imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonResult.id}.png"
-                    )
-                }
+            val pokemonList = filteredResults.map { pokemonResult ->
+                Pokemon(
+                    id = pokemonResult.id,
+                    name = pokemonResult.name,
+                    imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonResult.id}.png"
+                )
+            }
 
             LoadResult.Page(
                 data = pokemonList,
-                prevKey = null,
-                nextKey = null
+                prevKey = if (page == 0) null else page - 1,
+                nextKey = if (offset + limit >= ApiService.MAX_POKEMON) null else page + 1
             )
         } catch (e: Exception) {
             LoadResult.Error(

@@ -18,8 +18,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.guicarneirodev.pokedexapp.core.network.models.UiState
 import com.guicarneirodev.pokedexapp.features.details.presentation.components.PokemonDetailsContent
-import com.guicarneirodev.pokedexapp.features.details.presentation.components.ErrorView
-import com.guicarneirodev.pokedexapp.features.details.presentation.components.LoadingView
+import com.guicarneirodev.pokedexapp.features.shared.error.ErrorView
+import com.guicarneirodev.pokedexapp.features.shared.loading.LoadingView
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +55,7 @@ fun PokemonDetailsScreen(
             when (val state = uiState) {
                 is UiState.Loading -> LoadingView()
                 is UiState.Error -> ErrorView(
-                    error = state.error, // Precisamos alterar o UiState para usar AppError
+                    error = state.error,
                     onRetry = { viewModel.loadPokemonDetails(pokemonId) }
                 )
                 is UiState.Success -> PokemonDetailsContent(

@@ -25,7 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.guicarneirodev.pokedexapp.core.domain.model.Pokemon
-import com.guicarneirodev.pokedexapp.features.details.presentation.components.PokemonImage
+import com.guicarneirodev.pokedexapp.features.shared.image.PokemonImage
 
 @Composable
 fun PokemonItem(

@@ -1,4 +1,4 @@
-package com.guicarneirodev.pokedexapp.core.presentation.components.pokemon
+package com.guicarneirodev.pokedexapp.features.details.presentation.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
@@ -49,7 +49,7 @@ fun PokemonTypePattern(
 
         drawPath(
             path = pattern,
-            color = typeColor.copy(alpha = 0.075f),
+            color = typeColor.copy(alpha = 0.1f),
             style = Stroke(width = 1.dp.toPx())
         )
     }

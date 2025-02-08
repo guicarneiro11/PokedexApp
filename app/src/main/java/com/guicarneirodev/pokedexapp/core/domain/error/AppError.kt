@@ -14,19 +14,14 @@ sealed class AppError : Exception() {
     data class NotFound(override val message: String? = null) : AppError()
     data class Server(override val message: String? = null) : AppError()
     data class Unauthorized(override val message: String? = null) : AppError()
-    data class InvalidData(override val message: String? = null) : AppError()
 
     // Database Errors
     data class Database(override val message: String? = null) : AppError()
     data class DatabaseNotFound(override val message: String? = null) : AppError()
     data class DatabaseCorrupted(override val message: String? = null) : AppError()
 
-    // Cache Errors
-    data class CacheError(override val message: String? = null) : AppError()
-
-    // Generic Errors
+    // Others
     data class Unknown(override val message: String? = null) : AppError()
-    data class BusinessError(override val message: String? = null) : AppError()
 }
 
 fun Exception.toAppError(): AppError = when (this) {

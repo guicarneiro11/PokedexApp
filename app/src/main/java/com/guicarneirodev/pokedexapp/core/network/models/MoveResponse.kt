@@ -6,4 +6,3 @@ data class MoveResponse(
     @SerializedName("move") val move: NameUrlResponse,
     @SerializedName("type") val type: TypeResponse
 )
-

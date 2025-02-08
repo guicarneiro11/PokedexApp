@@ -1,4 +1,4 @@
-package com.guicarneirodev.pokedexapp.core.presentation.components.pokemon
+package com.guicarneirodev.pokedexapp.features.details.presentation.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Help

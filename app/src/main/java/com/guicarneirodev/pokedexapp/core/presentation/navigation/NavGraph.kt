@@ -1,4 +1,4 @@
-package com.guicarneirodev.pokedexapp.presentation.navigation
+package com.guicarneirodev.pokedexapp.core.presentation.navigation
 
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally

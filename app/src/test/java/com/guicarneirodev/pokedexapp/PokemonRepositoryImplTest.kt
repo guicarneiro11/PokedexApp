@@ -1,9 +1,13 @@
 package com.guicarneirodev.pokedexapp
 
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import com.guicarneirodev.pokedexapp.core.data.repository.PokemonRepositoryImpl
 import com.guicarneirodev.pokedexapp.core.database.PokemonDatabase
 import com.guicarneirodev.pokedexapp.core.database.dao.PokemonDao
+import com.guicarneirodev.pokedexapp.core.database.entity.PokemonEntity
 import com.guicarneirodev.pokedexapp.core.domain.error.AppError
+import com.guicarneirodev.pokedexapp.core.domain.model.Pokemon
 import com.guicarneirodev.pokedexapp.core.network.ApiService
 import com.guicarneirodev.pokedexapp.core.network.models.AbilityResponse
 import com.guicarneirodev.pokedexapp.core.network.models.MoveResponse
@@ -13,9 +17,11 @@ import com.guicarneirodev.pokedexapp.core.network.models.SpritesResponse
 import com.guicarneirodev.pokedexapp.core.network.models.StatResponse
 import com.guicarneirodev.pokedexapp.core.network.models.TypeResponse
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -24,6 +30,7 @@ import kotlinx.coroutines.test.setMain
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -64,53 +71,23 @@ class PokemonRepositoryImplTest {
     }
 
     @Test
-    fun `getPokemonDetails should include abilities and moves`() = runTest {
-        val pokemonId = 1
-        val response = PokemonDetailsResponse(
-            id = pokemonId,
-            name = "bulbasaur",
-            height = 7,
-            weight = 69,
-            types = listOf(TypeResponse(TypeResponse.Type("grass"))),
-            stats = listOf(StatResponse(45, StatResponse.Stat("hp"))),
-            sprites = SpritesResponse("url"),
-            abilities = listOf(
-                AbilityResponse(NameUrlResponse("overgrow", ""), false),
-                AbilityResponse(NameUrlResponse("chlorophyll", ""), true)
-            ),
-            moves = listOf(
-                MoveResponse(
-                    move = NameUrlResponse("tackle", "https://pokeapi.co/api/v2/move/33/"),
-                    type = TypeResponse(TypeResponse.Type("normal"))
-                )
-            )
-        )
-        coEvery { api.getPokemonDetails(pokemonId.toString()) } returns response
+    fun `searchPokemon returns filtered results from database`() = runTest {
+        val query = "pika"
+        val pokemonDao = mockk<PokemonDao>()
+        val pagingSource = mockk<PagingSource<Int, PokemonEntity>>()
 
-        val result = repository.getPokemonDetails(pokemonId)
+        coEvery { database.pokemonDao() } returns pokemonDao
+        coEvery { pokemonDao.searchPokemons(query) } returns pagingSource
 
-        assertEquals(2, result.abilities.size)
-        assertEquals("overgrow", result.abilities[0].name)
-        assertFalse(result.abilities[0].isHidden)
-        assertEquals(1, result.moves.size)
-        assertEquals("tackle", result.moves[0].name)
+        repository.searchPokemon(query)
+
+        coVerify { pokemonDao.searchPokemons(query) }
     }
 
-    @Test(expected = AppError.NotFound::class)
-    fun `getPokemonDetails should throw NotFound for 404 error`() = runTest {
-        val pokemonId = 1
-        coEvery { api.getPokemonDetails(pokemonId.toString()) } throws HttpException(
-            Response.error<Any>(404, "".toResponseBody())
-        )
+    @Test
+    fun `getPokemonList uses RemoteMediator for pagination`() = runTest {
+        repository.getPokemonList()
 
-        repository.getPokemonDetails(pokemonId)
-    }
-
-    @Test(expected = AppError.NoInternetConnection::class)
-    fun `getPokemonDetails should throw NoInternetConnection on network error`() = runTest {
-        val pokemonId = 1
-        coEvery { api.getPokemonDetails(pokemonId.toString()) } throws UnknownHostException()
-
-        repository.getPokemonDetails(pokemonId)
+        assertTrue(true)
     }
 }

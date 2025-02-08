@@ -12,6 +12,12 @@ interface PokemonDao {
     @Query("SELECT * FROM pokemon ORDER BY id")
     fun getPokemons(): PagingSource<Int, PokemonEntity>
 
+    @Query("SELECT * FROM pokemon WHERE name LIKE '%' || :query || '%' ORDER BY id")
+    fun searchPokemons(query: String): PagingSource<Int, PokemonEntity>
+
+    @Query("SELECT COUNT(*) FROM pokemon")
+    suspend fun getCount(): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(pokemons: List<PokemonEntity>)
 
@@ -23,10 +29,4 @@ interface PokemonDao {
 
     @Query("SELECT last_update FROM pokemon ORDER BY last_update DESC LIMIT 1")
     suspend fun getLastUpdateTime(): Long?
-
-    @Dao
-    interface PokemonDao {
-        @Query("SELECT * FROM pokemon WHERE name LIKE :query ORDER BY id")
-        fun searchPokemons(query: String): PagingSource<Int, PokemonEntity>
-    }
 }

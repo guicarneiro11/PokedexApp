@@ -30,7 +30,7 @@ data class PokemonDetailsResponse(
                 isHidden = it.isHidden
             )
         },
-        moves = moves.mapNotNull { moveResponse ->
+        moves = moves.map { moveResponse ->
             val moveType = moveResponse.move.url.split("/").dropLast(1).last()
             Move(
                 name = moveResponse.move.name.replace("-", " "),

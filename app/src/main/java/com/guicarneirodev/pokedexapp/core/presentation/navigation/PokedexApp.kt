@@ -1,8 +1,7 @@
-package com.guicarneirodev.pokedexapp.presentation
+package com.guicarneirodev.pokedexapp.core.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
-import com.guicarneirodev.pokedexapp.presentation.navigation.NavGraph
 
 @Composable
 fun PokedexApp(

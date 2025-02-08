@@ -20,7 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.guicarneirodev.pokedexapp.core.domain.model.Stat
-import com.guicarneirodev.pokedexapp.ui.theme.warning
+import com.guicarneirodev.pokedexapp.core.presentation.theme.warning
 
 @Composable
 fun StatRow(

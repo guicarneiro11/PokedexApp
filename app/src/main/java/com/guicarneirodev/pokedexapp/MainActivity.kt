@@ -1,4 +1,4 @@
-package com.guicarneirodev.pokedexapp.presentation
+package com.guicarneirodev.pokedexapp
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -13,7 +13,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.guicarneirodev.pokedexapp.ui.theme.PokedexAppTheme
+import com.guicarneirodev.pokedexapp.core.presentation.navigation.PokedexApp
+import com.guicarneirodev.pokedexapp.core.presentation.theme.PokedexAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

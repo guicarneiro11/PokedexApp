@@ -1,11 +1,12 @@
 package com.guicarneirodev.pokedexapp.core.data.repository
 
 import android.database.sqlite.SQLiteException
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.guicarneirodev.pokedexapp.core.data.source.PokemonPagingSource
+import com.guicarneirodev.pokedexapp.core.data.source.PokemonRemoteMediator
 import com.guicarneirodev.pokedexapp.core.database.PokemonDatabase
 import com.guicarneirodev.pokedexapp.core.domain.error.AppError
 import com.guicarneirodev.pokedexapp.core.domain.error.toAppError
@@ -21,6 +22,7 @@ import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
+@OptIn(ExperimentalPagingApi::class)
 class PokemonRepositoryImpl(
     private val api: ApiService,
     private val database: PokemonDatabase
@@ -28,10 +30,15 @@ class PokemonRepositoryImpl(
 
     override fun getPokemonList(): Flow<PagingData<Pokemon>> {
         return Pager(
-            config = PagingConfig(pageSize = ApiService.ITEMS_PER_PAGE),
-            pagingSourceFactory = {
-                database.pokemonDao().getPokemons()
-            }
+            config = PagingConfig(
+                pageSize = ApiService.ITEMS_PER_PAGE,
+                enablePlaceholders = true,
+                initialLoadSize = ApiService.ITEMS_PER_PAGE * 2,
+                prefetchDistance = ApiService.ITEMS_PER_PAGE,
+                maxSize = ApiService.MAX_POKEMON
+            ),
+            remoteMediator = PokemonRemoteMediator(api, database),
+            pagingSourceFactory = { database.pokemonDao().getPokemons() }
         ).flow.map { pagingData ->
             pagingData.map { entity ->
                 Pokemon(
@@ -49,26 +56,32 @@ class PokemonRepositoryImpl(
         } else {
             Pager(
                 config = PagingConfig(
-                    pageSize = 150,
-                    enablePlaceholders = false
-                ),
-                pagingSourceFactory = {
-                    PokemonPagingSource(api, query)
+                    pageSize = ApiService.ITEMS_PER_PAGE,
+                    enablePlaceholders = false,
+                    maxSize = ApiService.MAX_POKEMON
+                )
+            ) {
+                database.pokemonDao().searchPokemons(query.lowercase())
+            }.flow.map { pagingData ->
+                pagingData.map { entity ->
+                    Pokemon(
+                        id = entity.id,
+                        name = entity.name,
+                        imageUrl = entity.imageUrl
+                    )
                 }
-            ).flow
+            }
         }
     }
 
     override suspend fun getPokemonDetails(id: Int): PokemonDetails {
         try {
-            // Verifica cache primeiro
             database.pokemonDao().getPokemonById(id)?.let { entity ->
                 if (!PokemonDatabase.isDataStale(entity.lastUpdate)) {
                     return api.getPokemonDetails(id.toString()).toPokemonDetails()
                 }
             }
 
-            // Se não tem cache ou está desatualizado, busca da API
             return withContext(Dispatchers.IO) {
                 val details = api.getPokemonDetails(id.toString())
                 details.toPokemonDetails()

@@ -1,4 +1,4 @@
-package com.guicarneirodev.pokedexapp.features.details.presentation.components
+package com.guicarneirodev.pokedexapp.features.shared.error
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button

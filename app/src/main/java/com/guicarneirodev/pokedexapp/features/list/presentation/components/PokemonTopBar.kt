@@ -11,8 +11,6 @@ import androidx.compose.ui.Modifier
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PokemonTopBar(
-    query: String,
-    onQueryChange: (String) -> Unit,
     darkTheme: Boolean,
     onThemeChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
