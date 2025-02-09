@@ -105,7 +105,10 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     // Unit Tests
-    testImplementation(libs.mockk)
+    testImplementation(libs.mockk) {
+        exclude(module = "objenesis")
+    }
+    testImplementation(libs.mockk.agent)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.turbine)
     testImplementation(libs.test.robolectric)

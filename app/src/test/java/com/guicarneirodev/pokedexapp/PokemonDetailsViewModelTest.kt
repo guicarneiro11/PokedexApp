@@ -51,7 +51,6 @@ class PokemonDetailsViewModelTest {
             viewModel.uiState.collect { states.add(it) }
         }
 
-        // Configurar mock para atrasar a resposta
         coEvery { repository.getPokemonDetails(any()) } coAnswers {
             delay(1000)
             mockPokemonDetails
@@ -59,7 +58,6 @@ class PokemonDetailsViewModelTest {
 
         viewModel.loadPokemonDetails(1)
 
-        // Verificar estado inicial de loading
         assertTrue(states[0] is UiState.Loading)
 
         job.cancel()

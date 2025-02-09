@@ -33,7 +33,6 @@ import com.guicarneirodev.pokedexapp.core.network.models.PokemonListResponse
 import com.guicarneirodev.pokedexapp.core.network.models.PokemonResult
 import io.mockk.coVerify
 
-@OptIn(ExperimentalPagingApi::class)
 class PokemonPagingSourceTest {
     private val api = mockk<ApiService>()
     private lateinit var pagingSource: PokemonPagingSource
@@ -45,7 +44,6 @@ class PokemonPagingSourceTest {
 
     @Test
     fun `getRefreshKey returns correct key`() = runTest {
-        // Criar estado mock com dados
         val state = PagingState<Int, Pokemon>(
             pages = listOf(
                 PagingSource.LoadResult.Page(
@@ -65,7 +63,6 @@ class PokemonPagingSourceTest {
 
     @Test
     fun `load returns success page with pokemon list`() = runTest {
-        // Mock resposta da API
         val mockResponse = PokemonListResponse(
             count = ApiService.ITEMS_PER_PAGE,
             next = "next_url",
@@ -85,7 +82,6 @@ class PokemonPagingSourceTest {
             )
         } returns mockResponse
 
-        // Carregar primeira página
         val result = pagingSource.load(
             PagingSource.LoadParams.Refresh(
                 key = null,
@@ -186,12 +182,9 @@ class PokemonPagingSourceTest {
 
     @Test
     fun `load returns empty page when offset exceeds max pokemon`() = runTest {
-        // Usar um offset que realmente excede o máximo
         val page = (ApiService.MAX_POKEMON / ApiService.ITEMS_PER_PAGE) + 1
         val offset = page * ApiService.ITEMS_PER_PAGE
 
-        // Neste caso, nem precisamos mockar a API porque o PagingSource
-        // deve retornar uma página vazia antes mesmo de chamar a API
         val result = pagingSource.load(
             PagingSource.LoadParams.Refresh(
                 key = page,
@@ -206,7 +199,6 @@ class PokemonPagingSourceTest {
         assertNull(resultPage.prevKey)
         assertNull(resultPage.nextKey)
 
-        // Verificar que a API nem foi chamada
         coVerify(exactly = 0) { api.getPokemonList(any(), any()) }
     }
 }

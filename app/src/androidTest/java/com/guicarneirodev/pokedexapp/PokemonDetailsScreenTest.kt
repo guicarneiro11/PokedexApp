@@ -8,8 +8,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.guicarneirodev.pokedexapp.core.domain.error.AppError
 import com.guicarneirodev.pokedexapp.core.domain.model.PokemonDetails
 import com.guicarneirodev.pokedexapp.core.domain.model.Stat
-import com.guicarneirodev.pokedexapp.features.shared.error.ErrorView
 import com.guicarneirodev.pokedexapp.features.details.presentation.components.PokemonDetailsContent
+import com.guicarneirodev.pokedexapp.features.shared.error.ErrorView
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -58,16 +58,14 @@ class PokemonListViewModelTest {
         coEvery { repository.getPokemonList() } returns mockFlow
         coEvery { repository.searchPokemon(any()) } returns mockFlow
 
-        // Coletar os resultados em background
         val job = launch {
             viewModel.pokemonList.collect { _ ->
-                // Não precisamos fazer nada com os valores aqui
+
             }
         }
 
-        // Simular mudanças na query
         viewModel.onSearchQueryChange("pika")
-        advanceTimeBy(400) // Avançar além do debounce de 300ms
+        advanceTimeBy(400)
 
         coVerify { repository.searchPokemon("pika") }
         job.cancel()
@@ -75,33 +73,26 @@ class PokemonListViewModelTest {
 
     @Test
     fun `prefetchInitialData handles errors correctly`() = runTest {
-        // Preparar o mock que sempre lança exceção
         val exception = UnknownHostException("No internet")
         coEvery { repository.getPokemonList() } returns flow {
             throw exception
         }
 
-        // Lista para coletar os valores emitidos pelo StateFlow
         val errorStates = mutableListOf<AppError?>()
 
-        // Job para coletar os estados de erro
         val collectorJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.prefetchError.collect { error ->
                 errorStates.add(error)
             }
         }
 
-        // Executar prefetchInitialData em um job separado
         viewModel.prefetchInitialData()
 
-        // Avançar o tempo e executar todas as coroutines pendentes
         advanceUntilIdle()
 
         try {
-            // Verificar se temos pelo menos um erro coletado
             assertTrue("Should have collected at least one error", errorStates.isNotEmpty())
 
-            // Pegar o primeiro erro não-nulo (já que sabemos que o último será null)
             val error = errorStates.firstOrNull { it != null }
             assertNotNull(
                 "Expected an error state, but got null. Collected states: $errorStates",
